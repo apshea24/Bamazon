@@ -23,18 +23,22 @@ loadTable();
 
 function loadTable() {
 
+    let itemsArr = [];
+
     connection.query(
         "SELECT * FROM products", function (err, res) {
             if (err) throw err;
             for (var i = 0; i < res.length; i++) {
                 let table = res[i];
+                itemsArr.push(table)
                 let test = JSON.stringify(res[i]);
                 // console.log(test);
                 // console.log(table + "31");
-                var values = [
-                    [table.item_id, table.product_name, table.department_name, table.price, table.stock_quantity],
-                ]
-                console.table(["ID", "Name", "Department", "Price", "Quantity"], values)
+                // var values = [
+                //     [table.item_id, table.product_name, table.department_name, table.price, table.stock_quantity],
+                // ]
+                // console.log(table)
+                // console.log(itemsArr)
                 // console.table([
                 //     {
                 //         name: table.product_name,
@@ -53,6 +57,8 @@ function loadTable() {
                 //     }
                 // ]);
             };
+
+            console.table("Current Inventory", itemsArr);
             customerRun()
         }
     );
@@ -119,20 +125,26 @@ function updateQuantity(item, current, original, price, name) {
             console.log("------------------\n")
             console.log(chalk.red("Your Total Today is $" + price * current));
 
-            // inquirer.prompt([
-            //     {
-            //         type: "list",
-            //         name: "another_item",
-            //         message: "Would you like to purchase something else?",
-            //         choices: ["Yes", "No"]
-            //     }
-            // ]).then(function (user) {
-            //     if (user.another_item === "YES") {
-            //         loadTable()
-            //     } else {
-            //         connection.end();
-            //     }
-            // })
+            restart();
         }
     );
 };
+
+function restart() {
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "another_item",
+            message: "Would you like to purchase something else?",
+            choices: ["Yes", "No"]
+        }
+    ]).then(function (user) {
+        if (user.another_item === "No") {
+            connection.end();
+            console.log("works")
+        } else {
+            loadTable()
+            // connection.end();
+        }
+    })
+}
