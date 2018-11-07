@@ -144,7 +144,6 @@ function restart() {
             console.log("works")
         } else {
             loadTable()
-            // connection.end();
         }
     })
 }
